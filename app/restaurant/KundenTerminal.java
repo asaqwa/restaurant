@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import restaurant.kundenView.KundenViewBean;
+import restaurant.model.Bestellung;
 import restaurant.model.Gericht;
 import restaurant.model.Menue;
 
@@ -19,7 +20,7 @@ public class KundenTerminal extends Application {
 
     private final ArrayList<Gericht> menue = new Menue().getMenue();
 
-
+    ArrayList<Bestellung> bestellungen;
 
     public static void main(String[] args) {
         launch();
@@ -27,6 +28,9 @@ public class KundenTerminal extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        bestellungen = new ArrayList<>();
+
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Kundenterminal");
 

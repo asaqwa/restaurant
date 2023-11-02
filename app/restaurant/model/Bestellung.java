@@ -1,47 +1,50 @@
 package restaurant.model;
+
+import java.util.HashMap;
+
 public class Bestellung {
 
-    private Gericht gericht;
-    private int menge;
-    double gesamtepreis;
+    private final HashMap<Gericht, Integer> gerichte = new HashMap<>();
+    private double gesamtPreis;
+    private int gesamtMenge;
 
     public Bestellung() {
-        setGesamtepreis();
     }
 
-    public Bestellung(Gericht gericht, int menge) {
-        this.gericht = gericht;
-        this.menge = menge;
-        setGesamtepreis();
+    public void setGericht(Gericht gericht, int menge) {
+        gerichte.merge(gericht, menge, Integer::sum);
+        gesamtMenge += menge;
+        gesamtPreis += (gericht.getEinzelpreis()*menge);
     }
 
-    public Gericht getGericht() {
-        return gericht;
+    public void removeGericht(Gericht gericht, int menge) {
+        gerichte.merge(gericht, menge, (a,b)->a-b);
+        gesamtMenge -= menge;
+        gesamtPreis -= (gericht.getEinzelpreis()*menge);
+        roundPreis();
     }
 
-    public void setGericht(Gericht gericht) {
-        this.gericht = gericht;
+    public void removeGericht(Gericht gericht) {
+        gesamtMenge -= gerichte.get(gericht);
+        gesamtPreis -= (gericht.getEinzelpreis()*gerichte.get(gericht));
+        gerichte.remove(gericht);
+        roundPreis();
     }
 
-    public int getMenge() {
-        return menge;
+    private void roundPreis() {
+        gesamtPreis = Math.round(gesamtPreis * 100) / 100D;
     }
 
-    public void setMenge(int menge) {
-        this.menge = menge;
+    public HashMap<Gericht, Integer> getGerichte() {
+        return gerichte;
     }
 
-    public double getGesamtepreis() {
-        return gesamtepreis;
+    public double getGesamtPreis() {
+        return gesamtPreis;
     }
 
-    public void setGesamtepreis() {
-        this.gesamtepreis = menge*gericht.getEinzelpreis();
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%S\t\t%d\t\t\t%.2f", gericht, menge, gesamtepreis);
+    public int getGesamtMenge() {
+        return gesamtMenge;
     }
 
 }

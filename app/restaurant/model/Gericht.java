@@ -8,9 +8,6 @@ public class Gericht {
     private double einzelpreis;
     private GerichtType type;
 
-    public Gericht() {
-    }
-
     public Gericht(int gericht_Nr, String name, String zutaten, double einzelpreis, GerichtType type) {
         this.gericht_Nr = gericht_Nr;
         this.name = name;

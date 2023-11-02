@@ -8,7 +8,6 @@ private double summe;
 
     public Bestellung_Liste(ArrayList<Bestellung> bestellung_Liste, double  summe) {
         this.bestellung_Liste = bestellung_Liste;
-        setSumme();
     }
 
     public ArrayList<Bestellung> getBestellung_Liste() {
@@ -23,9 +22,6 @@ private double summe;
         return summe;
     }
 
-    public void setSumme() {
-        this.summe = summe +bestellung_Liste.get(0).getGesamtepreis();
-    }
 
     @Override
     public String toString() {
