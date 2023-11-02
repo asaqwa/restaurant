@@ -3,6 +3,7 @@ package restaurant.kundenView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -14,15 +15,26 @@ import restaurant.model.Gericht;
 import static restaurant.model.GerichtType.*;
 
 public class Bestellung extends KundenViewBean {
+    restaurant.model.Bestellung bestellung = new restaurant.model.Bestellung();
 
     @FXML
     Label name;
     @FXML
     Label zutaten;
     @FXML
-    Label preis;
+    Label einzelpreis;
     @FXML
     ImageView image;
+    @FXML
+    Label anzahlGerichte;
+    @FXML
+    Label preisBestellung;
+    @FXML
+    Label presInsgesamt;
+    @FXML
+    Button buttonHinzufuegen;
+    @FXML
+    Button buttonBestellen;
 
     @FXML
     ListView<Gericht> gerichtsListe;
@@ -36,13 +48,14 @@ public class Bestellung extends KundenViewBean {
 
     @FXML
     public void initialize() {
-        showGericht(null);
         gerichtsListe.getSelectionModel().selectedItemProperty().addListener((o,a,n)-> showGericht(n));
+        showGericht(null);
     }
 
     @Override
     public void initBean(KundenTerminal terminal) {
         super.initBean(terminal);
+        showBestellung();
         vorspeisen.addAll(terminal.getMenue().stream().filter(g -> Vorspeise == g.getType()).toArray(Gericht[]::new));
         hauptgerichte.addAll(terminal.getMenue().stream().filter(g -> Hauptgericht == g.getType()).toArray(Gericht[]::new));
         nachspeisen.addAll(terminal.getMenue().stream().filter(g -> Nachspeise == g.getType()).toArray(Gericht[]::new));
@@ -53,16 +66,27 @@ public class Bestellung extends KundenViewBean {
 
     @FXML
     private void handleAbbrechen() {
-        terminal.setStart();
+        if (terminal.getBestelungen().isLeer()) {
+            terminal.setStart();
+        } else {
+            terminal.setKundenMenu();
+        }
     }
 
     @FXML
     private void handleHinzufuegen() {
-
+        Gericht selectedGericht = gerichtsListe.getSelectionModel().getSelectedItem();
+        MengeAnfrage anfrage = MengeAnfrage.get(terminal.getPrimaryStage(), selectedGericht.getName());
+        anfrage.stage.showAndWait();
+        if (anfrage.menge>0) {
+            bestellung.setGericht(selectedGericht, anfrage.menge);
+        }
+        showBestellung();
     }
 
     @FXML
     private void handleBestellen() {
+        terminal.getBestelungen().add(bestellung);
         terminal.setKundenMenu();
     }
 
@@ -96,16 +120,24 @@ public class Bestellung extends KundenViewBean {
         if (gericht != null) {
             name.setText(gericht.getName());
             zutaten.setText(gericht.getZutaten());
-            preis.setText("" + gericht.getEinzelpreis());
+            einzelpreis.setText("" + gericht.getEinzelpreis());
 
             String path = KundenTerminal.class.getResource(gericht.getImagePath()).toString();
             image.setImage(new Image(path));
+            buttonHinzufuegen.setDisable(false);
         } else {
             name.setText("");
             zutaten.setText("");
-            preis.setText("");
+            einzelpreis.setText("");
             image.setImage(null);
+            buttonHinzufuegen.setDisable(true);
         }
     }
-
+    
+    private void showBestellung() {
+        anzahlGerichte.setText(String.valueOf(bestellung.getGesamtMenge()));
+        preisBestellung.setText(bestellung.getGesamtPreis() + "€");
+        presInsgesamt.setText(terminal.getBestelungen().getWert() + bestellung.getGesamtPreis() + "€");
+        if (!bestellung.isLeer() && buttonBestellen.isDisable()) buttonBestellen.setDisable(false);
+    }
 }

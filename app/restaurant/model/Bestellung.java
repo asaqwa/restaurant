@@ -15,6 +15,7 @@ public class Bestellung {
         gerichte.merge(gericht, menge, Integer::sum);
         gesamtMenge += menge;
         gesamtPreis += (gericht.getEinzelpreis()*menge);
+        roundPreis();
     }
 
     public void removeGericht(Gericht gericht, int menge) {
@@ -47,4 +48,7 @@ public class Bestellung {
         return gesamtMenge;
     }
 
+    public boolean isLeer() {
+        return gerichte.isEmpty();
+    }
 }

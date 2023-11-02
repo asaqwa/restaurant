@@ -13,6 +13,7 @@ import restaurant.kundenView.KundenViewBean;
 import restaurant.model.Bestellung;
 import restaurant.model.Gericht;
 import restaurant.model.Menue;
+import restaurant.model.Session;
 
 public class KundenTerminal extends Application {
     Stage primaryStage;
@@ -20,7 +21,7 @@ public class KundenTerminal extends Application {
 
     private final ArrayList<Gericht> menue = new Menue().getMenue();
 
-    ArrayList<Bestellung> bestellungen;
+    Session bestelungen ;
 
     public static void main(String[] args) {
         launch();
@@ -29,7 +30,7 @@ public class KundenTerminal extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        bestellungen = new ArrayList<>();
+        bestelungen = new Session();
 
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Kundenterminal");
@@ -76,5 +77,13 @@ public class KundenTerminal extends Application {
 
     public ArrayList<Gericht> getMenue() {
         return menue;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public Session getBestelungen() {
+        return bestelungen;
     }
 }
